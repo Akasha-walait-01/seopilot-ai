@@ -27,7 +27,7 @@ RUN playwright install --with-deps chromium
 COPY . .
 
 # Hugging Face Space port
-EXPOSE 7860
+EXPOSE 8080
 
 # Start backend + frontend
 CMD ["bash", "start.sh"]

@@ -16,5 +16,5 @@ echo "Starting Streamlit frontend..."
 
 streamlit run frontend/app.py \
     --server.address 0.0.0.0 \
-    --server.port 7860 \
+    --server.port ${PORT:-8080} \
     --server.headless true

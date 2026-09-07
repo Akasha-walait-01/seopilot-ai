@@ -36,8 +36,12 @@ def resource_path(relative_path):
 # Tell Playwright to look for its browser inside our bundled exe instead
 # of the default %LOCALAPPDATA%\ms-playwright location, which won't
 # exist on the receiver's machine.
-os.environ["PLAYWRIGHT_BROWSERS_PATH"] = resource_path("ms-playwright")
-
+# Only override Playwright's browser path when running as the bundled
+# exe. In normal `python launcher.py` runs, let Playwright use its
+# default install location (%LOCALAPPDATA%\ms-playwright).
+if getattr(sys, "frozen", False):
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = resource_path("ms-playwright")
+    
 def load_env():
     from dotenv import load_dotenv
     env_path = resource_path(ENV_FILE)

@@ -16,6 +16,9 @@
 
 import html
 import json
+import subprocess
+import sys
+import threading
 
 import pandas as pd
 import plotly.express as px
@@ -24,6 +27,30 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 BACKEND_URL = "http://127.0.0.1:8000"
+
+
+@st.cache_resource(show_spinner="Starting SEOPilot AI backend, please wait...")
+def _start_backend_once():
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            check=False,
+            timeout=300,
+        )
+    except Exception:
+        pass
+
+    def _run_backend():
+        import uvicorn
+        from backend.main import app as fastapi_app
+        uvicorn.run(fastapi_app, host="127.0.0.1", port=8000, log_level="info")
+
+    thread = threading.Thread(target=_run_backend, daemon=True)
+    thread.start()
+    return True
+
+
+_start_backend_once()
 
 st.set_page_config(
     page_title="SEOPilot AI | Autonomous SEO Agent",

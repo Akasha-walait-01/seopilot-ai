@@ -1,9 +1,8 @@
 import os
 import html
 import json
-import subprocess
 import sys
-import threading
+
 
 # Add project root to Python path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,40 +25,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-
 BACKEND_URL = "http://127.0.0.1:8000"
-
-
-@st.cache_resource(show_spinner="Starting SEOPilot AI backend, please wait...")
-def _start_backend_once():
-    try:
-        subprocess.run(
-            [sys.executable, "-m", "playwright", "install", "chromium"],
-            check=False,
-            timeout=300,
-        )
-    except Exception:
-        pass
-
-    def _run_backend():
-        import uvicorn
-        from backend.main import app as fastapi_app
-
-        uvicorn.run(
-            fastapi_app,
-            host="127.0.0.1",
-            port=8000,
-            log_level="info",
-        )
-
-    thread = threading.Thread(target=_run_backend, daemon=True)
-    thread.start()
-
-    return True
-
-
-_start_backend_once()
-
 
 # ---------- COLOR PALETTE ----------
 COLOR_PRIMARY = "#6C5CE7"

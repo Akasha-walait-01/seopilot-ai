@@ -9,28 +9,13 @@
 # Phase 8: WordPress/CMS connection + publish routes added
 # Phase 9: Autonomous Monitoring + Content Refresh Loop routes added
 # Post-9: crawlability, mobile, freshness, E-E-A-T, PageSpeed, Backlinks,
-#   User Signals, max_pages restored, keyword_type dropdown, full report
-#   generation (Monitoring & Refresh page) all added.
-# CRITICAL FIX: Windows needs WindowsProactorEventLoopPolicy set BEFORE
-# uvicorn creates its event loop, or Playwright's Chromium subprocess
-# launch fails with NotImplementedError. This must be the very first
-# thing in this file, before any other import.
+# User Signals, max_pages restored, keyword_type dropdown, full report
+# generation (Monitoring & Refresh page) all added.
 
-import sys
-import asyncio
-
-def crawl_website(website_id: int, max_pages: int = 10):  # existing function signature
-    # Windows fix: Playwright needs its own Proactor event loop in THIS thread
-    if sys.platform == "win32":
-        try:
-            asyncio.set_event_loop(asyncio.ProactorEventLoop())
-        except Exception:
-            pass
-    
-    # ... existing code (sync_playwright() waghera) yahan se shuru hota hai
 import json
 from datetime import datetime
 from urllib.parse import urlparse
+
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -41,6 +26,7 @@ from backend.providers.serp_provider import get_serp_provider
 from backend.providers.wordpress_provider import WordPressProvider
 from backend.providers.pagespeed_provider import check_pagespeed
 from backend.providers.authority_signals_provider import check_backlinks, check_user_signals
+
 from backend.tools.crawler import crawl_website, check_site_crawlability
 from backend.tools.keyword_tools import research_keywords
 from backend.tools.competitor_tools import analyze_competitor

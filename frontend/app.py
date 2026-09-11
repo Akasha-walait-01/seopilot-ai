@@ -1,30 +1,31 @@
-# This is the Streamlit dashboard - professional SaaS-style interface
-# Phase 1-5 features preserved. Phase 6 added Orchestrator Agent & Human
-# Approval page. Phase 7 added Internal Linking, Schema/JSON-LD & AEO/GEO
-# page. Phase 8 added WordPress Publishing page. Phase 9 added Monitoring &
-# Refresh page.
-# Post-9 update #1: Technical SEO Audit page shows crawlability/mobile/
-# freshness/E-E-A-T. Content Optimizer shows E-E-A-T + keyword intent.
-# New "SEO Signals & Speed" page added (PageSpeed/Backlinks/User Signals).
-# Post-9 update #2: max_pages input restored, crawl_note shown honestly.
-# Post-9 update #3: Keyword Research now has a short-tail/long-tail/both
-# dropdown. Monitoring & Refresh page now has a "Generate Full Report"
-# button that builds a complete Markdown project report and offers it
-# for download.
-# Project selection bug fix (per-page dropdowns, session_state
-# ["active_website_id"] as canonical source of truth) preserved.
-
+import os
 import html
 import json
 import subprocess
 import sys
 import threading
 
+# Add project root to Python path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 import pandas as pd
 import plotly.express as px
 import requests
 import streamlit as st
 from streamlit_option_menu import option_menu
+
+
+# Streamlit page configuration MUST be the first Streamlit command
+st.set_page_config(
+    page_title="SEOPilot AI | Autonomous SEO Agent",
+    page_icon="🚀",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 
 BACKEND_URL = "http://127.0.0.1:8000"
 
@@ -43,21 +44,22 @@ def _start_backend_once():
     def _run_backend():
         import uvicorn
         from backend.main import app as fastapi_app
-        uvicorn.run(fastapi_app, host="127.0.0.1", port=8000, log_level="info")
+
+        uvicorn.run(
+            fastapi_app,
+            host="127.0.0.1",
+            port=8000,
+            log_level="info",
+        )
 
     thread = threading.Thread(target=_run_backend, daemon=True)
     thread.start()
+
     return True
 
 
 _start_backend_once()
 
-st.set_page_config(
-    page_title="SEOPilot AI | Autonomous SEO Agent",
-    page_icon="🚀",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
 
 # ---------- COLOR PALETTE ----------
 COLOR_PRIMARY = "#6C5CE7"
